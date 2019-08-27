@@ -1,0 +1,14 @@
+{
+    "name": "edwinfadilah/laravel-passport-client",
+    "description": "EdwinFadilah Passport Client provides Resource server of Auth server (OAuth2 server <EdwinFadilah Passport>)",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Edwin Fadilah Lukman",
+            "email": "edwinfadilah@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
