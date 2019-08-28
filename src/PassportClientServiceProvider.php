@@ -5,6 +5,7 @@ namespace EdwinFadilah\PassportClient;
 use EdwinFadilah\PassportClient\Exceptions\ExceptionHandler;
 use Illuminate\Contracts\Debug\ExceptionHandler as Handler;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\App;
 
 class PassportClientServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class PassportClientServiceProvider extends ServiceProvider
             Handler::class,
             ExceptionHandler::class
         );
+
+        $this->app->alias('passport.client', PassportClient::class);
     }
 
     /**
