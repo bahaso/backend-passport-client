@@ -1,6 +1,6 @@
 {
-    "name": "edwinfadilah/laravel-passport-client",
-    "description": "EdwinFadilah Passport Client provides Resource server of Auth server (OAuth2 server <EdwinFadilah Passport>)",
+    "name": "bahaso/laravel-passport-client",
+    "description": "Bahaso Passport Client provides Resource server of Auth server (OAuth2 server <Bahaso Passport>)",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "EdwinFadilah\\PassportClient\\": "src/"
+            "Bahaso\\PassportClient\\": "src/"
         }
     }
 }
