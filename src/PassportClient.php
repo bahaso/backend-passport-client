@@ -119,7 +119,7 @@ class PassportClient
         try {
             $request = $http->request(
                 'post',
-                config('passport.sign_in_url', 'https://passportserver.dev.io/api/signin'),
+                config('passport.sign_in_url', ''),
                 $options);
         }
         catch (\Exception $exception) {
@@ -209,7 +209,7 @@ class PassportClient
         try {
             $request = $http->request(
                 'post',
-                config('passport.sign_up_url', 'https://passportserver.dev.io/api/signup'),
+                config('passport.sign_up_url', ''),
                 $options);
         }
         catch (\Exception $exception) {
@@ -270,7 +270,7 @@ class PassportClient
         try {
             $request = $http->request(
                 'get',
-                config('passport.get_user_from_token_url', 'https://passportserver.dev.io/api/token/user'),
+                config('passport.get_user_from_token_url', ''),
                 $options);
         }
         catch (\Exception $exception) {
@@ -331,11 +331,11 @@ class PassportClient
         $options = array_merge($body, $headers);
 
         if ($provider == self::FACEBOOK_PROVIDER)
-            $url = config('passport.facebook_auth_url', 'https://passportserver.dev.io/api/auth/facebook');
+            $url = config('passport.facebook_auth_url', '');
         else if ($provider == self::GOOGLE_PROVIDER)
-            $url = config('passport.facebook_auth_url', 'https://passportserver.dev.io/api/auth/google');
+            $url = config('passport.facebook_auth_url', '');
         else
-            $url = "https://passportserver.dev.io/api/signin";
+            $url = "notfound";
 
         try {
             $request = $http->request(
