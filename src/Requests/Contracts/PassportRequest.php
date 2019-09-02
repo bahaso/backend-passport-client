@@ -6,7 +6,7 @@
  * Time: 15:42
  */
 
-namespace EdwinFadilah\PassportClient\Requests\Contracts;
+namespace Bahaso\PassportClient\Requests\Contracts;
 
 
 interface PassportRequest

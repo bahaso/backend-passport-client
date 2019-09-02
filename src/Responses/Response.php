@@ -6,7 +6,7 @@
  * Time: 15:37
  */
 
-namespace EdwinFadilah\PassportClient\Responses;
+namespace Bahaso\PassportClient\Responses;
 
 
 class Response

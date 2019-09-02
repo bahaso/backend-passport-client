@@ -6,10 +6,10 @@
  * Time: 15:43
  */
 
-namespace EdwinFadilah\PassportClient\Requests;
+namespace Bahaso\PassportClient\Requests;
 
 
-use EdwinFadilah\PassportClient\Requests\Contracts\PassportRequest;
+use Bahaso\PassportClient\Requests\Contracts\PassportRequest;
 
 class SignInRequest implements PassportRequest
 {

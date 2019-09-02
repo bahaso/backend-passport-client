@@ -1,12 +1,12 @@
 <?php
 
 
-namespace EdwinFadilah\PassportClient\Facades;
+namespace Bahaso\PassportClient\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \EdwinFadilah\PassportClient\PassportClient
+ * @see \Bahaso\PassportClient\PassportClient
  */
 
 class PassportClientFacade extends Facade

@@ -6,7 +6,7 @@
  * Time: 17:11
  */
 
-namespace EdwinFadilah\PassportClient\Exceptions;
+namespace Bahaso\PassportClient\Exceptions;
 
 
 class InvalidRequestException extends PassportClientException

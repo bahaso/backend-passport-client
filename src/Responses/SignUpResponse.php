@@ -6,7 +6,7 @@
  * Time: 15:41
  */
 
-namespace EdwinFadilah\PassportClient\Responses;
+namespace Bahaso\PassportClient\Responses;
 
 
 class SignUpResponse extends Response

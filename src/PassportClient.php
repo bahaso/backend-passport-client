@@ -6,20 +6,20 @@
  * Time: 15:07
  */
 
-namespace EdwinFadilah\PassportClient;
+namespace Bahaso\PassportClient;
 
 
-use EdwinFadilah\PassportClient\Exceptions\InvalidGrantTypeException;
-use EdwinFadilah\PassportClient\Exceptions\InvalidRequestException;
-use EdwinFadilah\PassportClient\Exceptions\ServerResponseException;
-use EdwinFadilah\PassportClient\Requests\Contracts\PassportRequest;
-use EdwinFadilah\PassportClient\Requests\SignInRequest;
-use EdwinFadilah\PassportClient\Requests\SignUpRequest;
-use EdwinFadilah\PassportClient\Requests\SocialAuthRequest;
-use EdwinFadilah\PassportClient\Responses\GetUserResponse;
-use EdwinFadilah\PassportClient\Responses\Response;
-use EdwinFadilah\PassportClient\Responses\SignInResponse;
-use EdwinFadilah\PassportClient\Responses\SignUpResponse;
+use Bahaso\PassportClient\Exceptions\InvalidGrantTypeException;
+use Bahaso\PassportClient\Exceptions\InvalidRequestException;
+use Bahaso\PassportClient\Exceptions\ServerResponseException;
+use Bahaso\PassportClient\Requests\Contracts\PassportRequest;
+use Bahaso\PassportClient\Requests\SignInRequest;
+use Bahaso\PassportClient\Requests\SignUpRequest;
+use Bahaso\PassportClient\Requests\SocialAuthRequest;
+use Bahaso\PassportClient\Responses\GetUserResponse;
+use Bahaso\PassportClient\Responses\Response;
+use Bahaso\PassportClient\Responses\SignInResponse;
+use Bahaso\PassportClient\Responses\SignUpResponse;
 use Illuminate\Http\Request;
 
 class PassportClient

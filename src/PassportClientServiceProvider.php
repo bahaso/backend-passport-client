@@ -1,8 +1,8 @@
 <?php
 
-namespace EdwinFadilah\PassportClient;
+namespace Bahaso\PassportClient;
 
-use EdwinFadilah\PassportClient\Exceptions\ExceptionHandler;
+use Bahaso\PassportClient\Exceptions\ExceptionHandler;
 use Illuminate\Contracts\Debug\ExceptionHandler as Handler;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;

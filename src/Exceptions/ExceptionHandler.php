@@ -6,7 +6,7 @@
  * Time: 17:12
  */
 
-namespace EdwinFadilah\PassportClient\Exceptions;
+namespace Bahaso\PassportClient\Exceptions;
 
 
 use Illuminate\Foundation\Exceptions\Handler;
