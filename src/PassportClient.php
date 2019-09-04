@@ -62,51 +62,17 @@ class PassportClient
         }
     }
 
-    public function prepareSignInRequest($request)
+    public function prepareSignInRequest($client_id, $client_secret, $username, $password, $grant_type, $scope)
     {
-        $this->validateRequestForSignIn($request);
-        $passport_sign_in_request = new SignInRequest();
-        if ($request instanceof Request) {
-            $passport_sign_in_request->setUsername($request->get("username"));
-            $passport_sign_in_request->setPassword($request->get("password"));
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request->get("grant_type"));
-            $passport_sign_in_request->setScope("*");
-        }
-        else if (is_array($request)) {
-            $passport_sign_in_request->setUsername($request["username"]);
-            $passport_sign_in_request->setPassword($request["password"]);
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request["grant_type"]);
-            $passport_sign_in_request->setScope("*");
-        }
-
-        return $passport_sign_in_request;
-    }
-
-    private function validateRequestForSignIn($request)
-    {
-        $keys = ["username", "password", "grant_type"];
-        $errors = [];
-        if ($request instanceof Request) {
-            foreach ($keys as $key) {
-                if ($request->get($key) == null) {
-                    $errors[$key] = [$key . ' parameter is missing'];
-                }
-            }
-        }
-        else if (is_array($request)) {
-            foreach ($keys as $key) {
-                if (isset($request[$key])) {
-                    if (empty($request[$key])) $errors[$key] = [$key . ' parameter is missing'];
-                }
-            }
-        }
-
-        if (count($errors) > 0)
-            throw new InvalidRequestException(422, "Bad Request, missing parameter(s)", $errors);
+        return
+            new SignInRequest(
+                $client_id,
+                $client_secret,
+                $username,
+                $password,
+                $grant_type,
+                $scope
+            );
     }
     
     public function login(SignInRequest $request)
@@ -139,64 +105,37 @@ class PassportClient
         return new SignInResponse($response['code'], true, $response['message'], $response['data']);
     }
 
-    public function prepareSignUpRequest($request)
+    public function prepareSignUpRequest(
+        $client_id,
+        $client_secret,
+        $email,
+        $password,
+        $first_name,
+        $last_name,
+        $gender,
+        $cell_phone_number,
+        $country_id,
+        $city_id,
+        $birthday,
+        $grant_type,
+        $scope
+    )
     {
-        $this->validateRequestForSignUp($request);
-        $passport_sign_in_request = new SignUpRequest();
-        if ($request instanceof Request) {
-            $passport_sign_in_request->setEmail($request->get("email"));
-            $passport_sign_in_request->setPassword($request->get("password"));
-            $passport_sign_in_request->setFirstName($request->get("firstname"));
-            $passport_sign_in_request->setLastName($request->get("lastname"));
-            $passport_sign_in_request->setGender($request->get("gender"));
-            $passport_sign_in_request->setCellPhoneNumber($request->get("cellphonenumber"));
-            $passport_sign_in_request->setCountryId($request->get("countryd_id"));
-            $passport_sign_in_request->setCityId($request->get("city_id"));
-            $passport_sign_in_request->setBirthday($request->get("birthday"));
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request->get("grant_type"));
-            $passport_sign_in_request->setScope("*");
-        }
-        else if (is_array($request)) {
-            $passport_sign_in_request->setEmail($request["email"]);
-            $passport_sign_in_request->setPassword($request["password"]);
-            $passport_sign_in_request->setFirstName($request["firstname"]);
-            $passport_sign_in_request->setLastName($request["lastname"]);
-            $passport_sign_in_request->setGender($request["gender"]);
-            $passport_sign_in_request->setCellPhoneNumber($request["cellphonenumber"]);
-            $passport_sign_in_request->setCountryId($request["country_id"]);
-            $passport_sign_in_request->setCityId($request["city_id"]);
-            $passport_sign_in_request->setBirthday($request["birthday"]);
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request["grant_type"]);
-            $passport_sign_in_request->setScope("*");
-        }
-
-        return $passport_sign_in_request;
-    }
-
-    private function validateRequestForSignUp($request)
-    {
-        $keys = ["firstname", "lastname", "email", "password", "gender", "cellphonenumber", "birthday", "country_id", "city_id", "grant_type"];
-        $errors = [];
-        if ($request instanceof Request) {
-            foreach ($keys as $key) {
-                if ($request->get($key) == null) {
-                    $errors[$key] = $key . ' parameter is missing';
-                }
-            }
-        }
-        else if (is_array($request)) {
-            foreach ($keys as $key) {
-                if (! isset($request[$key])) $errors[$key] = [$key . ' parameter is missing'];
-                else if (empty($request[$key])) $errors[$key] = [$key . ' parameter is missing'];
-            }
-        }
-
-        if (count($errors) > 0)
-            throw new InvalidRequestException(422, "Bad Request, missing parameter(s)", $errors);
+        return new SignUpRequest(
+                $client_id,
+                $client_secret,
+                $email,
+                $password,
+                $first_name,
+                $last_name,
+                $gender,
+                $cell_phone_number,
+                $country_id,
+                $city_id,
+                $birthday,
+                $grant_type,
+                $scope
+        );
     }
 
     public function register(SignUpRequest $request)
@@ -300,27 +239,16 @@ class PassportClient
         return new GetUserResponse($response['code'], true, $response['message'], $response['data']);
     }
 
-    public function prepareSocialAuthRequest($request)
+    public function prepareSocialAuthRequest($client_id, $client_secret, $access_token, $grant_type, $scope)
     {
-        $passport_sign_in_request = new SocialAuthRequest();
-        if ($request instanceof Request) {
-            $access_token = $request->get("fb_access_token") ? $request->get("fb_access_token") : $request->get("auth_code", "");
-            $passport_sign_in_request->setAccessToken($access_token);
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request->get("grant_type"));
-            $passport_sign_in_request->setScope("*");
-        }
-        else if (is_array($request)) {
-            $access_token = isset($request["fb_access_token"]) ? $request["fb_access_token"] : (isset($request["auth_code"]) ? $request["auth_code"] : "");
-            $passport_sign_in_request->setAccessToken($access_token);
-            $passport_sign_in_request->setClientId(config('passport.client_id'));
-            $passport_sign_in_request->setClientSecret(config('passport.client_secret'));
-            $passport_sign_in_request->setGrantType($request["grant_type"]);
-            $passport_sign_in_request->setScope("*");
-        }
-
-        return $passport_sign_in_request;
+        return
+            new SocialAuthRequest(
+                $client_id,
+                $client_secret,
+                $access_token,
+                $grant_type,
+                $scope
+            );
     }
 
     public function socialAuth(SocialAuthRequest $request, $provider)
@@ -350,5 +278,26 @@ class PassportClient
         $response = json_decode((string) $request->getBody(), true);
 
         return $this->handleAuthServerSignInResponse($response);
+    }
+
+    public function checkToken($access_token, $scope)
+    {
+        $http = $this->prepareHttpClient();
+        $headers = $this->prepareRequestHeaderWithToken($access_token);
+        $options = array_merge($headers);
+        
+        try {
+            $request = $http->request(
+                'get',
+                config('passport.check_token_url', '').'?scope='.$scope,
+                $options);
+        }
+        catch (\Exception $exception) {
+            throw new ServerResponseException($exception->getCode(), $exception->getMessage());
+        }
+
+        $response = json_decode((string) $request->getBody(), true);
+
+        return $this->handleAuthServerGetUserResponse($response);
     }
 }

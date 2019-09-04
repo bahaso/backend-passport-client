@@ -21,9 +21,14 @@ class SignInRequest implements PassportRequest
     public $grant_type = "";
     public $scope = "";
 
-    public function setUsername($username)
+    public function __construct($client_id, $client_secret, $username, $password, $grant_type, $scope)
     {
-        return $this->username = $username;
+        $this->client_id = $client_id;
+        $this->client_secret = $client_secret;
+        $this->username = $username;
+        $this->password = $password;
+        $this->grant_type = $grant_type;
+        $this->scope = $scope;
     }
 
     public function getUsername()
@@ -31,19 +36,9 @@ class SignInRequest implements PassportRequest
         return $this->username;
     }
 
-    public function setEmail($email)
-    {
-        return $this->email = $email;
-    }
-
     public function getEmail()
     {
         return $this->email;
-    }
-
-    public function setPassword($password)
-    {
-        return $this->password = $password;
     }
 
     public function getPassword()
@@ -51,19 +46,9 @@ class SignInRequest implements PassportRequest
         return $this->password;
     }
 
-    public function setClientId($client_id)
-    {
-        return $this->client_id = $client_id;
-    }
-
     public function getClientId()
     {
         return $this->client_id;
-    }
-
-    public function setClientSecret($client_secret)
-    {
-        return $this->client_secret = $client_secret;
     }
 
     public function getClientSecret()
@@ -71,21 +56,11 @@ class SignInRequest implements PassportRequest
         return $this->client_secret;
     }
 
-    public function setGrantType($grant_type)
-    {
-        return $this->grant_type = $grant_type;
-    }
-
     public function getGrantType()
     {
         return $this->grant_type;
     }
-
-    public function setScope($scope)
-    {
-        return $this->scope = $scope;
-    }
-
+    
     public function getScope()
     {
         return $this->scope;

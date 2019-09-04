@@ -19,9 +19,13 @@ class SocialAuthRequest implements PassportRequest
     public $grant_type = "";
     public $scope = "";
 
-    public function setAccessToken($access_token)
+    public function __construct($client_id, $client_secret, $access_token, $grant_type, $scope)
     {
-        return $this->access_token = $access_token;
+        $this->client_id = $client_id;
+        $this->client_secret = $client_secret;
+        $this->access_token = $access_token;
+        $this->grant_type = $grant_type;
+        $this->scope = $scope;
     }
 
     public function getAccessToken()
@@ -29,19 +33,9 @@ class SocialAuthRequest implements PassportRequest
         return $this->access_token;
     }
 
-    public function setClientId($client_id)
-    {
-        return $this->client_id = $client_id;
-    }
-
     public function getClientId()
     {
         return $this->client_id;
-    }
-
-    public function setClientSecret($client_secret)
-    {
-        return $this->client_secret = $client_secret;
     }
 
     public function getClientSecret()
@@ -49,21 +43,11 @@ class SocialAuthRequest implements PassportRequest
         return $this->client_secret;
     }
 
-    public function setGrantType($grant_type)
-    {
-        return $this->grant_type = $grant_type;
-    }
-
     public function getGrantType()
     {
         return $this->grant_type;
     }
-
-    public function setScope($scope)
-    {
-        return $this->scope = $scope;
-    }
-
+    
     public function getScope()
     {
         return $this->scope;
