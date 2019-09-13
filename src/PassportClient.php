@@ -13,20 +13,22 @@ use Bahaso\PassportClient\Exceptions\InvalidGrantTypeException;
 use Bahaso\PassportClient\Exceptions\InvalidRequestException;
 use Bahaso\PassportClient\Exceptions\ServerResponseException;
 use Bahaso\PassportClient\Requests\Contracts\PassportRequest;
+use Bahaso\PassportClient\Requests\LoginRequest;
+use Bahaso\PassportClient\Requests\RegisterRequest;
 use Bahaso\PassportClient\Requests\SignInRequest;
 use Bahaso\PassportClient\Requests\SignUpRequest;
 use Bahaso\PassportClient\Requests\SocialAuthRequest;
+use Bahaso\PassportClient\Requests\ValidateOTPRequest;
 use Bahaso\PassportClient\Responses\GetUserResponse;
 use Bahaso\PassportClient\Responses\Response;
 use Bahaso\PassportClient\Responses\SignInResponse;
-use Bahaso\PassportClient\Responses\SignUpResponse;
-use Illuminate\Http\Request;
 
 class PassportClient
 {
     const GRANT_TYPE_PASSWORD = "password";
     const GRANT_TYPE_SOCIAL = "social";
     const GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+    const GRANT_TYPE_AUTH_OTP_CODE = "authorization_otp_code";
     const FACEBOOK_PROVIDER = "facebook";
     const GOOGLE_PROVIDER = "google";
 
@@ -75,7 +77,7 @@ class PassportClient
             );
     }
     
-    public function login(SignInRequest $request)
+    public function signIn(SignInRequest $request)
     {
         $http = $this->prepareHttpClient();
         $body = $this->prepareRequestBody($request);
@@ -138,7 +140,7 @@ class PassportClient
         );
     }
 
-    public function register(SignUpRequest $request)
+    public function signUp(SignUpRequest $request)
     {
         $http = $this->prepareHttpClient();
         $body = $this->prepareRequestBody($request);
@@ -162,7 +164,7 @@ class PassportClient
 
     private function prepareRequestBody(PassportRequest $request)
     {
-        if ($request->getGrantType() == self::GRANT_TYPE_PASSWORD || $request->getGrantType() == self::GRANT_TYPE_SOCIAL) {
+        if ($request->getGrantType() == self::GRANT_TYPE_PASSWORD || $request->getGrantType() == self::GRANT_TYPE_SOCIAL || $request->getGrantType() == self::GRANT_TYPE_AUTH_OTP_CODE) {
             return [
                 "form_params" => (array) $request
             ];
@@ -170,14 +172,6 @@ class PassportClient
         else {
             throw new InvalidGrantTypeException(422, "Grant type " . $request->getGrantType() . " is not supported");
         }
-    }
-
-    private function handleAuthServerSignUpResponse($response)
-    {
-        if ($response['code'] !== 200) {
-            $this->handleAuthServerResponseException($response);
-        }
-        return new SignUpResponse($response['code'], true, $response['message'], $response['data']);
     }
 
     private function handleAuthServerResponseException($response)
@@ -261,7 +255,7 @@ class PassportClient
         if ($provider == self::FACEBOOK_PROVIDER)
             $url = config('passport.facebook_auth_url', '');
         else if ($provider == self::GOOGLE_PROVIDER)
-            $url = config('passport.facebook_auth_url', '');
+            $url = config('passport.google_auth_url', '');
         else
             $url = "notfound";
 
@@ -299,5 +293,75 @@ class PassportClient
         $response = json_decode((string) $request->getBody(), true);
 
         return $this->handleAuthServerGetUserResponse($response);
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $http = $this->prepareHttpClient();
+        $body = [
+            "form_params" => (array) $request
+        ];
+        $headers = $this->prepareRequestHeader();
+        $options = array_merge($body, $headers);
+
+        try {
+            $request = $http->request(
+                'post',
+                config('passport.register_url', ''),
+                $options);
+        }
+        catch (\Exception $exception) {
+            throw new ServerResponseException($exception->getCode(), $exception->getMessage());
+        }
+
+        $response = json_decode((string) $request->getBody(), true);
+
+        return $this->handleAuthServerSignInResponse($response);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $http = $this->prepareHttpClient();
+        $body = [
+            "form_params" => (array) $request
+        ];
+        $headers = $this->prepareRequestHeader();
+        $options = array_merge($body, $headers);
+
+        try {
+            $request = $http->request(
+                'post',
+                config('passport.log_in_url', ''),
+                $options);
+        }
+        catch (\Exception $exception) {
+            throw new ServerResponseException($exception->getCode(), $exception->getMessage());
+        }
+
+        $response = json_decode((string) $request->getBody(), true);
+
+        return $this->handleAuthServerSignInResponse($response);
+    }
+
+    public function validateOTP(ValidateOTPRequest $request)
+    {
+        $http = $this->prepareHttpClient();
+        $body = $this->prepareRequestBody($request);
+        $headers = $this->prepareRequestHeader();
+        $options = array_merge($body, $headers);
+
+        try {
+            $request = $http->request(
+                'post',
+                config('passport.validate_otp_url', ''),
+                $options);
+        }
+        catch (\Exception $exception) {
+            throw new ServerResponseException($exception->getCode(), $exception->getMessage());
+        }
+
+        $response = json_decode((string) $request->getBody(), true);
+
+        return $this->handleAuthServerSignInResponse($response);
     }
 }
