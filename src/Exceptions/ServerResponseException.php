@@ -17,7 +17,7 @@ class ServerResponseException extends \Exception
     protected $headers;
     protected $data;
 
-    public function __construct($httpCode = 400, $message = "Bad Response", $errors = [], $data = null, Exception $previous = null, array $headers = [], $code = 0)
+    public function __construct($httpCode = 400, $message = "Bad Response", $errors = [], $data = null, \Exception $previous = null, array $headers = [], $code = 0)
     {
         parent::__construct($message, $code, $previous);
         $this->httpCode = $httpCode;

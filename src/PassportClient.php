@@ -9,6 +9,7 @@
 namespace Bahaso\PassportClient;
 
 
+use Bahaso\PassportClient\Entities\User;
 use Bahaso\PassportClient\Exceptions\InvalidGrantTypeException;
 use Bahaso\PassportClient\Exceptions\InvalidRequestException;
 use Bahaso\PassportClient\Exceptions\ServerResponseException;
@@ -31,6 +32,8 @@ class PassportClient
     const GRANT_TYPE_AUTH_OTP_CODE = "authorization_otp_code";
     const FACEBOOK_PROVIDER = "facebook";
     const GOOGLE_PROVIDER = "google";
+
+    private static $user = null;
 
     protected function prepareHttpClient()
     {
@@ -104,7 +107,7 @@ class PassportClient
         if ($response['code'] !== 200) {
             $this->handleAuthServerResponseException($response);
         }
-        return new SignInResponse($response['code'], true, $response['message'], $response['data']);
+        return new SignInResponse($response['code'], true, $response['message'], $response['result']);
     }
 
     public function prepareSignUpRequest(
@@ -230,7 +233,20 @@ class PassportClient
         if ($response['code'] !== 200) {
             $this->handleAuthServerResponseException($response);
         }
-        return new GetUserResponse($response['code'], true, $response['message'], $response['data']);
+
+        return new GetUserResponse($response['code'], true, $response['message'], $response['result']);
+    }
+
+    private function handleAuthServerCheckTokenResponse($response)
+    {
+        if ($response['code'] !== 200) {
+            $this->handleAuthServerResponseException($response);
+        }
+
+        $user = $response['result']['user'];
+        self::$user = new User($user['_id'], $user['name'], $user['email'], $user['calling_code'], $user['phone_number']);
+
+        return new GetUserResponse($response['code'], true, $response['message'], $response['result']['oauth']);
     }
 
     public function prepareSocialAuthRequest($client_id, $client_secret, $access_token, $grant_type, $scope)
@@ -292,7 +308,7 @@ class PassportClient
 
         $response = json_decode((string) $request->getBody(), true);
 
-        return $this->handleAuthServerGetUserResponse($response);
+        return $this->handleAuthServerCheckTokenResponse($response);
     }
 
     public function register(RegisterRequest $request)
@@ -363,5 +379,13 @@ class PassportClient
         $response = json_decode((string) $request->getBody(), true);
 
         return $this->handleAuthServerSignInResponse($response);
+    }
+
+    /**
+     * @return User
+     */
+    public static function user()
+    {
+        return self::$user;
     }
 }
