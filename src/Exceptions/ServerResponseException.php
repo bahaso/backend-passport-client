@@ -9,7 +9,9 @@
 namespace Bahaso\PassportClient\Exceptions;
 
 
-class ServerResponseException extends \Exception
+use Exception;
+
+class ServerResponseException extends Exception
 {
     protected $httpCode;
     protected $success = false;
@@ -17,7 +19,7 @@ class ServerResponseException extends \Exception
     protected $headers;
     protected $data;
 
-    public function __construct($httpCode = 400, $message = "Bad Response", $errors = [], $data = null, Exception $previous = null, array $headers = [], $code = 0)
+    public function __construct($httpCode = 400, $message = "Bad Response", $errors = [], $data = null, \Exception $previous = null, array $headers = [], $code = 0)
     {
         parent::__construct($message, $code, $previous);
         $this->httpCode = $httpCode;
@@ -55,5 +57,30 @@ class ServerResponseException extends \Exception
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function render($request)
+    {
+        if ($request->wantsJson() || $request->ajax()) {
+            $response = [];
+
+            $errors = $this->getErrors();
+
+            $response['code'] = $this->getHttpCode();
+            $response['success'] = false;
+            $response['message'] = $this->getMessage();
+            if ($errors) $response['errors'] = $errors;
+
+            return response()
+                ->json($response);
+        }
+
+        return response($this);
     }
 }
