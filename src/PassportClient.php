@@ -23,6 +23,7 @@ use Bahaso\PassportClient\Requests\ValidateOTPRequest;
 use Bahaso\PassportClient\Responses\GetUserResponse;
 use Bahaso\PassportClient\Responses\Response;
 use Bahaso\PassportClient\Responses\SignInResponse;
+use Illuminate\Support\Facades\Cache;
 
 class PassportClient
 {
@@ -34,6 +35,7 @@ class PassportClient
     const GOOGLE_PROVIDER = "google";
 
     private static $user = null;
+    private static $access_token = '';
 
     protected function prepareHttpClient()
     {
@@ -237,7 +239,7 @@ class PassportClient
         return new GetUserResponse($response['code'], true, $response['message'], $response['result']);
     }
 
-    private function handleAuthServerCheckTokenResponse($response)
+    private function handleAuthServerCheckTokenResponse($access_token, $response)
     {
         if ($response['code'] !== 200) {
             $this->handleAuthServerResponseException($response);
@@ -245,6 +247,8 @@ class PassportClient
 
         $user = $response['result']['user'];
         self::$user = new User($user['_id'], $user['name'], $user['email'], $user['calling_code'], $user['phone_number']);
+
+        Cache::put($access_token, self::$user, 600);
 
         return new GetUserResponse($response['code'], true, $response['message'], $response['result']['oauth']);
     }
@@ -292,6 +296,13 @@ class PassportClient
 
     public function checkToken($access_token, $scope)
     {
+        self::$access_token = $access_token;
+
+        if (Cache::has($access_token)) {
+            self::$user = Cache::get($access_token);
+            return new GetUserResponse(200, true, 'success', self::$user);
+        }
+        
         $http = $this->prepareHttpClient();
         $headers = $this->prepareRequestHeaderWithToken($access_token);
         $options = array_merge($headers);
@@ -308,7 +319,7 @@ class PassportClient
 
         $response = json_decode((string) $request->getBody(), true);
 
-        return $this->handleAuthServerCheckTokenResponse($response);
+        return $this->handleAuthServerCheckTokenResponse($access_token, $response);
     }
 
     public function register(RegisterRequest $request)
