@@ -239,7 +239,7 @@ class PassportClient
         return new GetUserResponse($response['code'], true, $response['message'], $response['result']);
     }
 
-    private function handleAuthServerCheckTokenResponse($access_token, $response)
+    private function handleAuthServerCheckTokenResponse($access_token, $scope, $response)
     {
         if ($response['code'] !== 200) {
             $this->handleAuthServerResponseException($response);
@@ -249,6 +249,7 @@ class PassportClient
         self::$user = new User($user['_id'], $user['name'], $user['email'], $user['calling_code'], $user['phone_number']);
 
         Cache::put($access_token, self::$user, 600);
+        Cache::put($access_token.'_scope', $scope, 600);
 
         return new GetUserResponse($response['code'], true, $response['message'], $response['result']['oauth']);
     }
@@ -297,12 +298,21 @@ class PassportClient
     public function checkToken($access_token, $scope)
     {
         self::$access_token = $access_token;
+        
+        if (Cache::has($access_token) && Cache::has($access_token.'_scope')) {
+            $array_saved_scopes = explode(',', Cache::get($access_token.'_scope'));
 
-        if (Cache::has($access_token)) {
+            $array_check_scopes = explode(',', $scope);
+
+            foreach ($array_check_scopes as $scope) {
+                if (! in_array($scope, $array_saved_scopes))
+                    throw new ServerResponseException(401, 'you are not authorized');
+            }
+
             self::$user = Cache::get($access_token);
             return new GetUserResponse(200, true, 'success', self::$user);
         }
-        
+
         $http = $this->prepareHttpClient();
         $headers = $this->prepareRequestHeaderWithToken($access_token);
         $options = array_merge($headers);
@@ -319,7 +329,7 @@ class PassportClient
 
         $response = json_decode((string) $request->getBody(), true);
 
-        return $this->handleAuthServerCheckTokenResponse($access_token, $response);
+        return $this->handleAuthServerCheckTokenResponse($access_token, $scope, $response);
     }
 
     public function register(RegisterRequest $request)
